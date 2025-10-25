@@ -50,9 +50,9 @@ export function ProgressRing({ progress, size = 100 }: ProgressRingProps) {
           </Pie>
         </PieChart>
       </ChartContainer>
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <span 
-          className="font-headline font-bold text-foreground"
+          className="font-headline font-bold text-foreground text-center"
           style={{ fontSize: `${fontSize}px` }}
         >
           {Math.round(progress)}%
