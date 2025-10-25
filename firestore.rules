@@ -1,0 +1,197 @@
+/**
+ * @fileoverview Firestore Security Rules for FinWell application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model. Each user has complete
+ * control over their own data (transactions, goals, scheduled transactions,
+ * insights), while preventing access to other users' data. All write
+ * operations require a valid, authenticated user.
+ *
+ * Data Structure:
+ * All data is nested under /users/{userId}, ensuring that data is isolated
+ * and access control can be easily managed through path-based rules.
+ *
+ * Key Security Decisions:
+ * - Users can only read and write their own data.
+ * - Listing other users' data is forbidden.
+ * - Data validation is minimized to focus on authorization and relational integrity,
+ *   allowing for rapid prototyping and flexible data shapes.
+ * - Authorization decisions are based on the authenticated user's ID (`request.auth.uid`)
+ *   and the document path (`userId`).
+ *
+ * Denormalization for Authorization:
+ * The data structure itself enforces ownership by nesting all user-specific
+ * data under the /users/{userId} path. This avoids the need for complex queries
+ * or additional reads to determine ownership.
+ *
+ * Structural Segregation:
+ * All user-specific data is stored under the /users/{userId} collection,
+ * ensuring a homogeneous security posture within collections.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows users to read and write their own user document.
+     * @path /users/{userId}
+     * @allow (create) - User with ID 'user_abc' can create their own user document if authenticated as 'user_abc'.
+     * @allow (get, update, delete) - User with ID 'user_abc' can get, update, and delete their own user document if authenticated as 'user_abc'.
+     * @deny (create) - User with ID 'user_xyz' cannot create a user document with ID 'user_abc' if authenticated as 'user_xyz'.
+     * @deny (get, update, delete) - User with ID 'user_xyz' cannot get, update, or delete the user document with ID 'user_abc' if authenticated as 'user_xyz'.
+     * @principle Enforces document ownership for all operations on user documents.
+     */
+    match /users/{userId} {
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by the existing owner of the document, only if the document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allow a user to create their own document.  Also enforces that the ID in the
+      // document matches the authenticated user's ID. This prevents one user from
+      // creating a document and claiming it's for another user.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      // Allow a user to get their own document.
+      allow get: if isOwner(userId);
+      // Allow a user to list their own document.
+      allow list: if false;
+      // Allow a user to update their own document, but enforce that they cannot change the user ID.
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      // Allow a user to delete their own document.
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows users to manage their own transactions.
+     * @path /users/{userId}/transactions/{transactionId}
+     * @allow (create, get, list, update, delete) - User with ID 'user_abc' can manage transactions under their own /users/user_abc path if authenticated as 'user_abc'.
+     * @deny (create, get, list, update, delete) - User with ID 'user_xyz' cannot manage transactions under the /users/user_abc path if authenticated as 'user_xyz'.
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/transactions/{transactionId} {
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by the existing owner of the document, only if the document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allow a user to create a transaction under their own user ID.  Enforces
+      // relational integrity by requiring that the userId field in the document
+      // matches the userId in the path.
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      // Allow a user to get a transaction under their own user ID.
+      allow get: if isOwner(userId);
+      // Allow a user to list transactions under their own user ID.
+      allow list: if isOwner(userId);
+      // Allow a user to update a transaction under their own user ID. Ensures that the userId field cannot be changed.
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      // Allow a user to delete a transaction under their own user ID.
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows users to manage their own goals.
+     * @path /users/{userId}/goals/{goalId}
+     * @allow (create, get, list, update, delete) - User with ID 'user_abc' can manage goals under their own /users/user_abc path if authenticated as 'user_abc'.
+     * @deny (create, get, list, update, delete) - User with ID 'user_xyz' cannot manage goals under the /users/user_abc path if authenticated as 'user_xyz'.
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/goals/{goalId} {
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by the existing owner of the document, only if the document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allow a user to create a goal under their own user ID. Enforces
+      // relational integrity by requiring that the userId field in the document
+      // matches the userId in the path.
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      // Allow a user to get a goal under their own user ID.
+      allow get: if isOwner(userId);
+      // Allow a user to list goals under their own user ID.
+      allow list: if isOwner(userId);
+      // Allow a user to update a goal under their own user ID. Ensures that the userId field cannot be changed.
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      // Allow a user to delete a goal under their own user ID.
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows users to manage their own scheduled transactions.
+     * @path /users/{userId}/scheduledTransactions/{scheduledTransactionId}
+     * @allow (create, get, list, update, delete) - User with ID 'user_abc' can manage scheduled transactions under their own /users/user_abc path if authenticated as 'user_abc'.
+     * @deny (create, get, list, update, delete) - User with ID 'user_xyz' cannot manage scheduled transactions under the /users/user_abc path if authenticated as 'user_xyz'.
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/scheduledTransactions/{scheduledTransactionId} {
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by the existing owner of the document, only if the document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allow a user to create a scheduled transaction under their own user ID. Enforces
+      // relational integrity by requiring that the userId field in the document
+      // matches the userId in the path.
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      // Allow a user to get a scheduled transaction under their own user ID.
+      allow get: if isOwner(userId);
+      // Allow a user to list scheduled transactions under their own user ID.
+      allow list: if isOwner(userId);
+      // Allow a user to update a scheduled transaction under their own user ID. Ensures that the userId field cannot be changed.
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      // Allow a user to delete a scheduled transaction under their own user ID.
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows users to manage their own insights.
+     * @path /users/{userId}/insights/{insightId}
+     * @allow (create, get, list, update, delete) - User with ID 'user_abc' can manage insights under their own /users/user_abc path if authenticated as 'user_abc'.
+     * @deny (create, get, list, update, delete) - User with ID 'user_xyz' cannot manage insights under the /users/user_abc path if authenticated as 'user_xyz'.
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/insights/{insightId} {
+      // Helper function to check if the request is made by the owner of the document.
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the request is made by the existing owner of the document, only if the document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      // Allow a user to create an insight under their own user ID. Enforces
+      // relational integrity by requiring that the userId field in the document
+      // matches the userId in the path.
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      // Allow a user to get an insight under their own user ID.
+      allow get: if isOwner(userId);
+      // Allow a user to list insights under their own user ID.
+      allow list: if isOwner(userId);
+      // Allow a user to update an insight under their own user ID. Ensures that the userId field cannot be changed.
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      // Allow a user to delete an insight under their own user ID.
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

@@ -1,0 +1,305 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the FinWell application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "signUpDate": {
+          "type": "string",
+          "description": "The date and time when the user signed up.",
+          "format": "date-time"
+        },
+        "profilePicture": {
+          "type": "string",
+          "description": "URL or path to the user's profile picture (guest pic by default).",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "signUpDate"
+      ]
+    },
+    "Transaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Transaction",
+      "type": "object",
+      "description": "Represents a financial transaction (expense or income).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Transaction entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Transaction)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the transaction.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of the transaction (positive for income, negative for expense)."
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of the transaction (e.g., Food, Transport, Shopping)."
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional note or description for the transaction."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "date",
+        "amount",
+        "category"
+      ]
+    },
+    "Goal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Goal",
+      "type": "object",
+      "description": "Represents a user's financial goal.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Goal entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Goal)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name or title of the goal (e.g., 'Save $100 this month')."
+        },
+        "targetAmount": {
+          "type": "number",
+          "description": "Target amount to be saved or spent."
+        },
+        "currentAmount": {
+          "type": "number",
+          "description": "Current amount saved or spent towards the goal."
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Deadline for achieving the goal.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "targetAmount",
+        "currentAmount",
+        "deadline"
+      ]
+    },
+    "ScheduledTransaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ScheduledTransaction",
+      "type": "object",
+      "description": "Represents a recurring transaction, like salary or bill payments.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ScheduledTransaction entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N ScheduledTransaction)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the scheduled transaction (e.g., 'Salary', 'Phone Bill')."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of the scheduled transaction."
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of the scheduled transaction."
+        },
+        "recurrenceType": {
+          "type": "string",
+          "description": "How often the transaction occurs (e.g., 'Monthly', 'Weekly', 'Bi-weekly')."
+        },
+        "recurrenceDay": {
+          "type": "number",
+          "description": "The day of the month or week when the transaction occurs."
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The first day that this scheduled transaction starts",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "amount",
+        "recurrenceType",
+        "recurrenceDay",
+        "startDate"
+      ]
+    },
+    "Insight": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Insight",
+      "type": "object",
+      "description": "Represents a financial insight generated for the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Insight entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Insight)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date when the insight was generated.",
+          "format": "date-time"
+        },
+        "message": {
+          "type": "string",
+          "description": "The insight message (e.g., 'You spent 25% less on entertainment this week!')."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "date",
+        "message"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information.  Top-level collection. Path-based ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/transactions/{transactionId}",
+        "definition": {
+          "entityName": "Transaction",
+          "schema": {
+            "$ref": "#/backend/entities/Transaction"
+          },
+          "description": "Stores financial transactions for each user. Path-based ownership enforced via the /users/{userId} path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique identifier for the transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/goals/{goalId}",
+        "definition": {
+          "entityName": "Goal",
+          "schema": {
+            "$ref": "#/backend/entities/Goal"
+          },
+          "description": "Stores financial goals for each user. Path-based ownership enforced via the /users/{userId} path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "goalId",
+              "description": "The unique identifier for the goal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/scheduledTransactions/{scheduledTransactionId}",
+        "definition": {
+          "entityName": "ScheduledTransaction",
+          "schema": {
+            "$ref": "#/backend/entities/ScheduledTransaction"
+          },
+          "description": "Stores scheduled transactions for each user. Path-based ownership enforced via the /users/{userId} path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "scheduledTransactionId",
+              "description": "The unique identifier for the scheduled transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/insights/{insightId}",
+        "definition": {
+          "entityName": "Insight",
+          "schema": {
+            "$ref": "#/backend/entities/Insight"
+          },
+          "description": "Stores financial insights generated for each user. Path-based ownership enforced via the /users/{userId} path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "insightId",
+              "description": "The unique identifier for the insight."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to be secure, scalable, and easy to debug, following the core design principles and strategy mandates. It avoids hierarchical authorization dependencies by denormalizing authorization context where necessary and uses structural segregation to ensure a homogeneous security posture within collections. Access modeling is standardized using path-based ownership for user-specific data and membership maps for collaborative data. Explicit state modeling and predictable schema enhance data clarity and predictability.\n\nAuthorization Independence is achieved primarily through path-based ownership for user data. For instance, transactions, goals, scheduled transactions, and insights are all stored under `/users/{userId}`. This eliminates the need for `get()` calls in security rules because access control is inherently tied to the user's ID in the path.  Because a single user is the owner, membership maps are not required.\n\nThe design supports QAPs (Rules are not Filters) by segregating data based on access requirements. All data under a `users/{userId}` collection is considered private to that user and authorized by security rules on the path. This prevents the need to filter data within the rules based on user access, ensuring efficient `list` operations."
+  }
+}
