@@ -14,10 +14,10 @@ import { useMemo } from 'react';
 export function TotalBalanceCard() {
   const { transactions } = useTransactions();
   const { totalBalance, totalIncome, totalExpenses } = useMemo(() => {
-    const totalIncome = transactions
+    const totalIncome = (transactions ?? [])
       .filter((t) => t.type === 'income')
       .reduce((acc, t) => acc + t.amount, 0);
-    const totalExpenses = transactions
+    const totalExpenses = (transactions ?? [])
       .filter((t) => t.type === 'expense')
       .reduce((acc, t) => acc + t.amount, 0);
     const totalBalance = totalIncome - totalExpenses;

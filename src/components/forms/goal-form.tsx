@@ -15,10 +15,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useGoals } from '@/contexts/goals-provider';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Goal name must be at least 2 characters.'),
   targetAmount: z.coerce.number().positive('Target amount must be positive.'),
+  currentAmount: z.coerce.number().min(0, 'Current amount cannot be negative.').optional(),
 });
 
 type GoalFormValues = z.infer<typeof formSchema>;
@@ -29,20 +31,23 @@ interface GoalFormProps {
 
 export function GoalForm({ onFinished }: GoalFormProps) {
   const { toast } = useToast();
+  const { addGoal } = useGoals();
   const form = useForm<GoalFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       targetAmount: 0,
+      currentAmount: 0,
     },
   });
 
   function onSubmit(values: GoalFormValues) {
-    console.log(values);
+    addGoal({ ...values, currentAmount: values.currentAmount || 0 });
     toast({
       title: 'Goal Created!',
       description: `You've set a new goal: "${values.name}".`,
     });
+    form.reset();
     onFinished?.();
   }
 
@@ -70,6 +75,19 @@ export function GoalForm({ onFinished }: GoalFormProps) {
               <FormLabel>Target Amount</FormLabel>
               <FormControl>
                 <Input type="number" placeholder="1000.00" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="currentAmount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Current Amount (Optional)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="0.00" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

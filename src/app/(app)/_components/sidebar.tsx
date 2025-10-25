@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { BarChart3, LayoutDashboard, Sparkles, Trophy } from 'lucide-react';
+import { useAuth } from '@/firebase';
 
 import { FinwellLogo } from '@/components/finwell-logo';
 import {
@@ -24,6 +25,7 @@ const navItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const auth = useAuth();
 
   return (
     <Sidebar collapsible="icon" variant="sidebar" side="left">

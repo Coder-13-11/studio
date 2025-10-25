@@ -1,16 +1,17 @@
 import type { LucideIcon } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
 
 export type Transaction = {
   id: string;
   type: 'income' | 'expense';
   category: string;
   amount: number;
-  date: Date;
+  date: Date | Timestamp;
   note?: string;
 };
 
 export type Category = {
-  id: string;
+  id:string;
   name: string;
   icon: LucideIcon;
   color: string;
@@ -21,5 +22,5 @@ export type Goal = {
   name: string;
   targetAmount: number;
   currentAmount: number;
-  deadline?: Date;
+  deadline?: Date | Timestamp;
 };

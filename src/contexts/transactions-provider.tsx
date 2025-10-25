@@ -1,29 +1,40 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import type { Transaction } from '@/lib/types';
-import { transactions as initialTransactions } from '@/lib/data';
+import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { WithId } from '@/firebase/firestore/use-collection';
 
 interface TransactionsContextType {
-  transactions: Transaction[];
-  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  transactions: WithId<Transaction>[] | null;
+  addTransaction: (transaction: Omit<Transaction, 'id' | 'date'> & { date: Date }) => void;
+  isLoading: boolean;
 }
 
 const TransactionsContext = createContext<TransactionsContextType | undefined>(undefined);
 
 export function TransactionsProvider({ children }: { children: ReactNode }) {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const { firestore, user } = useFirebase();
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction = {
+  const transactionsCollection = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return collection(firestore, 'users', user.uid, 'transactions');
+  }, [firestore, user]);
+
+  const { data: transactions, isLoading } = useCollection<Transaction>(transactionsCollection);
+
+  const addTransaction = (transaction: Omit<Transaction, 'id' | 'date'> & { date: Date }) => {
+    if (!transactionsCollection) return;
+    addDoc(transactionsCollection, {
       ...transaction,
-      id: new Date().toISOString() + Math.random().toString(),
-    };
-    setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
+      date: transaction.date,
+      createdAt: serverTimestamp(),
+    });
   };
 
   return (
-    <TransactionsContext.Provider value={{ transactions, addTransaction }}>
+    <TransactionsContext.Provider value={{ transactions, addTransaction, isLoading }}>
       {children}
     </TransactionsContext.Provider>
   );

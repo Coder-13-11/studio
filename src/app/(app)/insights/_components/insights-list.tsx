@@ -8,19 +8,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTransactions } from '@/contexts/transactions-provider';
+import { useGoals } from '@/contexts/goals-provider';
 
 export function InsightsList() {
   const [insights, setInsights] = useState<FinancialInsightsOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { transactions } = useTransactions();
+  const { goals } = useGoals();
 
   const handleGenerateInsights = async () => {
     setLoading(true);
     setError(null);
     setInsights(null);
     try {
-      const result = await getFinancialInsights(transactions);
+      if (!transactions || !goals) {
+        setError('Transactions or goals data is not available yet.');
+        setLoading(false);
+        return;
+      }
+      const result = await getFinancialInsights(transactions, goals);
       if ('error' in result) {
         setError(result.error as string);
       } else {

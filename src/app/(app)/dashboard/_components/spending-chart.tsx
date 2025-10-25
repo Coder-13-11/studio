@@ -18,19 +18,20 @@ import {
 } from '@/components/ui/card';
 import { categories } from '@/lib/data';
 import { useTransactions } from '@/contexts/transactions-provider';
-import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 
 const chartConfig = {
   total: {
     label: 'Total',
   },
-};
+} satisfies ChartConfig;
 
 categories.forEach((category) => {
   if (category.name !== 'Income') {
-    chartConfig[category.name as keyof typeof chartConfig] = {
+    const key = category.name.toLowerCase();
+    chartConfig[key as keyof typeof chartConfig] = {
       label: category.name,
-      color: category.color,
+      color: `hsl(var(--chart-${Object.keys(chartConfig).length}))`,
     };
   }
 });
@@ -41,13 +42,13 @@ export function SpendingChart() {
   const data = useMemo(() => {
     const expenseCategories = categories.filter((c) => c.name !== 'Income');
     return expenseCategories.map((category) => {
-      const total = transactions
+      const total = (transactions ?? [])
         .filter((t) => t.type === 'expense' && t.category === category.name)
         .reduce((acc, t) => acc + t.amount, 0);
       return {
         name: category.name,
         total,
-        fill: `var(--color-${category.name})`,
+        fill: `var(--color-${category.name.toLowerCase()})`,
       };
     });
   }, [transactions]);
@@ -78,14 +79,8 @@ export function SpendingChart() {
             <Tooltip
               cursor={{ fill: 'hsl(var(--muted))' }}
               content={<ChartTooltipContent
-                formatter={(value, name) => {
-                  return (
-                    <div className="flex flex-col">
-                      <span>{name}</span>
-                      <span className="font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)}</span>
-                    </div>
-                  );
-                }}
+                formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)}
+                nameKey='name'
               />}
             />
             <Bar dataKey="total" radius={[4, 4, 0, 0]} />

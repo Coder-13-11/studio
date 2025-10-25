@@ -10,16 +10,54 @@ import {
 } from '@/components/ui/card';
 import { useTransactions } from '@/contexts/transactions-provider';
 import { CategoryIcon } from '@/components/category-icon';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function RecentTransactionsCard() {
-  const { transactions } = useTransactions();
+  const { transactions, isLoading } = useTransactions();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+  
+  if (isLoading) {
+    return (
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle>Recent Transactions</CardTitle>
+          <CardDescription>Your latest income and expenses.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-1/3" />
+            </div>
+            <Skeleton className="h-5 w-1/4" />
+          </div>
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-1/3" />
+            </div>
+            <Skeleton className="h-5 w-1/4" />
+          </div>
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-lg" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-3 w-1/3" />
+            </div>
+            <Skeleton className="h-5 w-1/4" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
-  const recentTransactions = transactions
+  const recentTransactions = (transactions ?? [])
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 

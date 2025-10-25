@@ -79,10 +79,10 @@ export function AnalyticsCharts() {
     const days = eachDayOfInterval({ start, end });
 
     return days.map(day => {
-      const dailyIncome = transactions
+      const dailyIncome = (transactions ?? [])
         .filter(t => t.type === 'income' && new Date(t.date).toDateString() === day.toDateString())
         .reduce((acc, t) => acc + t.amount, 0);
-      const dailyExpenses = transactions
+      const dailyExpenses = (transactions ?? [])
         .filter(t => t.type === 'expense' && new Date(t.date).toDateString() === day.toDateString())
         .reduce((acc, t) => acc + t.amount, 0);
       return {
@@ -96,7 +96,7 @@ export function AnalyticsCharts() {
   const categoryData = useMemo(() => {
     const expenseCategories = categories.filter((c) => c.name !== 'Income');
     return expenseCategories.map((category) => {
-      const total = transactions
+      const total = (transactions ?? [])
         .filter((t) => t.type === 'expense' && t.category === category.name)
         .reduce((acc, t) => acc + t.amount, 0);
       return {
@@ -119,9 +119,9 @@ export function AnalyticsCharts() {
             <CardTitle>Income vs. Expenses</CardTitle>
             <CardDescription>This month's cash flow.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={lineChartConfig} className="min-h-[200px] w-full">
-              <LineChart accessibilityLayer data={monthlyData}>
+          <CardContent className="h-[400px] w-full p-0">
+            <ChartContainer config={lineChartConfig} className="h-full w-full">
+              <LineChart accessibilityLayer data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
                 <Tooltip content={<ChartTooltipContent formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)} />} />
@@ -139,10 +139,10 @@ export function AnalyticsCharts() {
             <CardTitle>Spending by Category</CardTitle>
             <CardDescription>This month's expense breakdown.</CardDescription>
           </CardHeader>
-          <CardContent>
-             <ChartContainer config={pieChartConfig} className="min-h-[200px] w-full">
+          <CardContent className="h-[400px] w-full flex items-center justify-center p-0">
+             <ChartContainer config={pieChartConfig} className="h-full w-full">
                 <PieChart accessibilityLayer>
-                    <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={150} labelLine={false} label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                    <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={'80%'} labelLine={false} label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
                         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                         const x  = cx + radius * Math.cos(-midAngle * Math.PI / 180);
                         const y = cy  + radius * Math.sin(-midAngle * Math.PI / 180);
