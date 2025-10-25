@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { BarChart3, LayoutDashboard, Sparkles, Trophy } from 'lucide-react';
+import { BarChart3, LayoutDashboard, Sparkles, Trophy, CalendarClock } from 'lucide-react';
 import { useAuth } from '@/firebase';
 
 import { FinwellLogo } from '@/components/finwell-logo';
@@ -20,6 +20,7 @@ const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/analytics', icon: BarChart3, label: 'Analytics' },
   { href: '/goals', icon: Trophy, label: 'Goals' },
+  { href: '/scheduled', icon: CalendarClock, label: 'Scheduled' },
   { href: '/insights', icon: Sparkles, label: 'Insights' },
 ];
 

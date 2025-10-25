@@ -4,6 +4,7 @@ import { TotalBalanceCard } from './_components/total-balance-card';
 import { GoalsSummaryCard } from './_components/goals-summary-card';
 import { SpendingChart } from './_components/spending-chart';
 import { RecentTransactionsCard } from './_components/recent-transactions-card';
+import { InsightsCard } from './_components/insights-card';
 
 export default function DashboardPage() {
   return (
@@ -18,6 +19,7 @@ export default function DashboardPage() {
           <SpendingChart />
         </div>
         <div className="space-y-6">
+          <InsightsCard />
           <GoalsSummaryCard />
           <RecentTransactionsCard />
         </div>

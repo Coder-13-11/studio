@@ -8,6 +8,7 @@ import { TransactionsProvider } from '@/contexts/transactions-provider';
 import { GoalsProvider } from '@/contexts/goals-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppHeader } from './_components/app-header';
+import { ScheduledTransactionsProvider } from '@/contexts/scheduled-transactions-provider';
 
 export default function AppLayout({
   children,
@@ -41,15 +42,17 @@ export default function AppLayout({
   return (
     <TransactionsProvider>
       <GoalsProvider>
-        <SidebarProvider>
-          <div className="flex min-h-screen">
-            <AppSidebar />
-            <SidebarInset>
-              <AppHeader />
-              <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
+        <ScheduledTransactionsProvider>
+          <SidebarProvider>
+            <div className="flex min-h-screen">
+              <AppSidebar />
+              <SidebarInset>
+                <AppHeader />
+                <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+              </SidebarInset>
+            </div>
+          </SidebarProvider>
+        </ScheduledTransactionsProvider>
       </GoalsProvider>
     </TransactionsProvider>
   );

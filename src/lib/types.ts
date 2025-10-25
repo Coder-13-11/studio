@@ -26,3 +26,14 @@ export type Goal = {
   deadline?: Date | Timestamp | string;
   createdAt: Date | Timestamp | string;
 };
+
+export type ScheduledTransaction = {
+    id: string;
+    name: string;
+    amount: number;
+    category: string;
+    recurrenceType: 'Monthly' | 'Weekly' | 'Bi-weekly';
+    recurrenceDay: number;
+    startDate: Date | Timestamp | string;
+    createdAt: Date | Timestamp | string;
+};
