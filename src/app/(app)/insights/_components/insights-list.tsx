@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTransactions } from '@/contexts/transactions-provider';
 import { useGoals } from '@/contexts/goals-provider';
+import { Timestamp } from 'firebase/firestore';
 
 export function InsightsList() {
   const [insights, setInsights] = useState<FinancialInsightsOutput | null>(null);
@@ -27,7 +28,22 @@ export function InsightsList() {
         setLoading(false);
         return;
       }
-      const result = await getFinancialInsights(transactions, goals);
+
+      // Convert Timestamps to strings
+      const serializableTransactions = transactions.map(t => ({
+        ...t,
+        date: t.date instanceof Timestamp ? t.date.toDate().toISOString() : t.date,
+        createdAt: t.createdAt instanceof Timestamp ? t.createdAt.toDate().toISOString() : t.createdAt,
+      }));
+
+      const serializableGoals = goals.map(g => ({
+        ...g,
+        deadline: g.deadline instanceof Timestamp ? g.deadline.toDate().toISOString() : g.deadline,
+        createdAt: g.createdAt instanceof Timestamp ? g.createdAt.toDate().toISOString() : g.createdAt,
+      }));
+
+
+      const result = await getFinancialInsights(serializableTransactions, serializableGoals);
       if ('error' in result) {
         setError(result.error as string);
       } else {

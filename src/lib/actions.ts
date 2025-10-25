@@ -2,9 +2,9 @@
 
 import { generateFinancialInsights } from '@/ai/flows/generate-financial-insights';
 import { Goal, Transaction } from './types';
-import { WithId } from '@/firebase/firestore/use-collection';
 
-export async function getFinancialInsights(currentTransactions: WithId<Transaction>[], currentGoals: WithId<Goal>[]) {
+// The data passed to this function should be serializable.
+export async function getFinancialInsights(currentTransactions: Transaction[], currentGoals: Goal[]) {
   try {
     const insights = await generateFinancialInsights({
       spendingData: JSON.stringify(currentTransactions),

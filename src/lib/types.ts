@@ -6,8 +6,9 @@ export type Transaction = {
   type: 'income' | 'expense';
   category: string;
   amount: number;
-  date: Date | Timestamp;
+  date: Date | Timestamp | string;
   note?: string;
+  createdAt: Date | Timestamp | string;
 };
 
 export type Category = {
@@ -22,5 +23,6 @@ export type Goal = {
   name: string;
   targetAmount: number;
   currentAmount: number;
-  deadline?: Date | Timestamp;
+  deadline?: Date | Timestamp | string;
+  createdAt: Date | Timestamp | string;
 };
