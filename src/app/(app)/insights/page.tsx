@@ -8,7 +8,9 @@ export default function InsightsPage() {
         title="Financial Insights"
         description="Get personalized, AI-powered advice to improve your financial habits."
       />
-      <InsightsList />
+      <div className="page-content">
+        <InsightsList />
+      </div>
     </>
   );
 }

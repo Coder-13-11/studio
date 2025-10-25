@@ -8,7 +8,9 @@ export default function AnalyticsPage() {
         title="Analytics"
         description="Dive deeper into your spending and income trends."
       />
-      <AnalyticsCharts />
+      <div className="page-content">
+        <AnalyticsCharts />
+      </div>
     </>
   );
 }

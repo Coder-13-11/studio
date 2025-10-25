@@ -19,14 +19,14 @@ export default function GoalsPage() {
 
       {isLoading && (
          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Skeleton className="h-48 w-full" />
-          <Skeleton className="h-48 w-full" />
-          <Skeleton className="h-48 w-full" />
+          <Skeleton className="h-48 w-full rounded-lg" />
+          <Skeleton className="h-48 w-full rounded-lg" />
+          <Skeleton className="h-48 w-full rounded-lg" />
         </div>
       )}
 
       {!isLoading && goals && goals.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="page-content grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {goals.map((goal) => (
             <GoalProgressCard key={goal.id} goal={goal} />
           ))}
@@ -34,7 +34,7 @@ export default function GoalsPage() {
       )}
 
       {!isLoading && goals && goals.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-muted/20 py-12 text-center">
+        <div className="page-content flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-muted/20 py-12 text-center">
             <h3 className="text-lg font-semibold">No goals yet</h3>
             <p className="text-sm text-muted-foreground">Get started by creating a new savings goal.</p>
             <div className="mt-4">

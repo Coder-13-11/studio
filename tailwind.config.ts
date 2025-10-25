@@ -67,6 +67,7 @@ export default {
         },
       },
       borderRadius: {
+        xl: 'calc(var(--radius) + 4px)',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
@@ -88,10 +89,21 @@ export default {
             height: '0',
           },
         },
+        'fade-in-up': {
+          from: {
+            opacity: '0',
+            transform: 'translateY(16px)'
+          },
+          to: {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in-up': 'fade-in-up 0.5s ease-out both',
       },
     },
   },

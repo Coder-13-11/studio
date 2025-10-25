@@ -13,15 +13,21 @@ export default function DashboardPage() {
         title="Dashboard"
         description="Here's a snapshot of your financial health."
       />
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          <TotalBalanceCard />
+      <div className="page-content grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="col-span-12">
+           <TotalBalanceCard />
+        </div>
+        <div className="col-span-12 lg:col-span-8">
           <SpendingChart />
         </div>
-        <div className="space-y-6">
+        <div className="col-span-12 lg:col-span-4">
+           <RecentTransactionsCard />
+        </div>
+         <div className="col-span-12 lg:col-span-6">
           <InsightsCard />
+        </div>
+         <div className="col-span-12 lg:col-span-6">
           <GoalsSummaryCard />
-          <RecentTransactionsCard />
         </div>
       </div>
       <AddTransactionDialog />
