@@ -162,37 +162,6 @@
         "recurrenceDay",
         "startDate"
       ]
-    },
-    "Insight": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Insight",
-      "type": "object",
-      "description": "Represents a financial insight generated for the user.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Insight entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Insight)"
-        },
-        "date": {
-          "type": "string",
-          "description": "Date when the insight was generated.",
-          "format": "date-time"
-        },
-        "message": {
-          "type": "string",
-          "description": "The insight message (e.g., 'You spent 25% less on entertainment this week!')."
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "date",
-        "message"
-      ]
     }
   },
   "auth": {
@@ -275,26 +244,6 @@
             {
               "name": "scheduledTransactionId",
               "description": "The unique identifier for the scheduled transaction."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/insights/{insightId}",
-        "definition": {
-          "entityName": "Insight",
-          "schema": {
-            "$ref": "#/backend/entities/Insight"
-          },
-          "description": "Stores financial insights generated for each user. Path-based ownership enforced via the /users/{userId} path.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "insightId",
-              "description": "The unique identifier for the insight."
             }
           ]
         }
