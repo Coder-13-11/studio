@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
+import { signInAnonymously } from 'firebase/auth';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from './_components/sidebar';
 import { TransactionsProvider } from '@/contexts/transactions-provider';
@@ -17,15 +17,17 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   const { user, isUserLoading } = useUser();
-  const router = useRouter();
+  const auth = useAuth();
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      router.push('/login');
+      signInAnonymously(auth).catch((error) => {
+        console.error("Anonymous sign-in failed:", error);
+      });
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading, auth]);
 
-  if (isUserLoading) {
+  if (isUserLoading || !user) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -34,10 +36,6 @@ export default function AppLayout({
         </div>
       </div>
     );
-  }
-  
-  if (!user) {
-    return null;
   }
 
   return (

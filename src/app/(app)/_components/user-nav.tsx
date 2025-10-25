@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { LogOut, Settings, User as UserIcon } from 'lucide-react';
-import { useUser, useAuth } from '@/firebase';
+import { User as UserIcon } from 'lucide-react';
+import { useUser } from '@/firebase';
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -22,12 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function UserNav() {
   const { state } = useSidebar();
   const { user, isUserLoading } = useUser();
-  const auth = useAuth();
   const userAvatar = PlaceHolderImages.find((img) => img.id === 'user-avatar-guest');
-
-  const handleLogout = () => {
-    auth.signOut();
-  };
   
   if (isUserLoading) {
     if (state === 'collapsed') {
@@ -51,16 +46,16 @@ export function UserNav() {
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
             <Avatar className="h-10 w-10">
               <AvatarImage src={user?.photoURL || userAvatar?.imageUrl} alt="User avatar" />
-              <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+              <AvatarFallback>{user?.isAnonymous ? 'A' : (user?.email?.charAt(0).toUpperCase() || 'U')}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{user?.displayName || 'FinWell User'}</p>
+              <p className="text-sm font-medium leading-none">{user?.isAnonymous ? "Anonymous User" : (user?.displayName || 'FinWell User')}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                {user?.email}
+                {user?.isAnonymous ? "Welcome!" : user?.email}
               </p>
             </div>
           </DropdownMenuLabel>
@@ -70,16 +65,7 @@ export function UserNav() {
               <UserIcon />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings />
-              Settings
-            </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>
-            <LogOut />
-            Log out
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -94,20 +80,20 @@ export function UserNav() {
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.photoURL || userAvatar?.imageUrl} alt="User avatar" />
-            <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+            <AvatarFallback>{user?.isAnonymous ? 'A' : (user?.email?.charAt(0).toUpperCase() || 'U')}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-start">
-            <span className="text-sm font-medium">{user?.displayName || 'FinWell User'}</span>
-            <span className="text-xs text-muted-foreground">{user?.email}</span>
+            <span className="text-sm font-medium">{user?.isAnonymous ? "Anonymous User" : (user?.displayName || 'FinWell User')}</span>
+            <span className="text-xs text-muted-foreground">{user?.isAnonymous ? "Welcome!" : user?.email}</span>
           </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{user?.displayName || 'FinWell User'}</p>
+              <p className="text-sm font-medium leading-none">{user?.isAnonymous ? "Anonymous User" : (user?.displayName || 'FinWell User')}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                {user?.email}
+                 {user?.isAnonymous ? "Welcome!" : user?.email}
               </p>
             </div>
           </DropdownMenuLabel>
@@ -117,16 +103,7 @@ export function UserNav() {
               <UserIcon />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings />
-              Settings
-            </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>
-            <LogOut />
-            Log out
-          </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
