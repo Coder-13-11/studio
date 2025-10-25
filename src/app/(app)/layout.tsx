@@ -2,11 +2,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
-import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from './_components/sidebar';
 import { TransactionsProvider } from '@/contexts/transactions-provider';
 import { GoalsProvider } from '@/contexts/goals-provider';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AppHeader } from './_components/app-header';
 
 export default function AppLayout({
   children,
@@ -44,6 +45,7 @@ export default function AppLayout({
           <div className="flex min-h-screen">
             <AppSidebar />
             <SidebarInset>
+              <AppHeader />
               <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
             </SidebarInset>
           </div>
