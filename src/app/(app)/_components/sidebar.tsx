@@ -33,7 +33,7 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 p-2">
           <FinwellLogo className="h-8 w-8 text-sidebar-primary" />
-          <span className="font-headline text-lg font-semibold text-sidebar-foreground">
+          <span className="font-headline text-2xl font-bold uppercase text-sidebar-foreground">
             FinWell
           </span>
         </div>
@@ -46,10 +46,11 @@ export function AppSidebar() {
                 asChild
                 isActive={pathname === item.href}
                 tooltip={{ children: item.label, side: 'right' }}
+                className="font-semibold"
               >
                 <a href={item.href}>
                   <item.icon />
-                  <span>{item.label}</span>
+                  <span className="uppercase">{item.label}</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>

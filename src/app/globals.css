@@ -4,81 +4,81 @@
 
 @layer base {
   :root {
-    --background: 206 24% 95%;
-    --foreground: 215 28% 17%;
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 17%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 17%;
-    --primary: 206 50% 65%;
-    --primary-foreground: 215 28% 17%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 275 40% 79%;
-    --accent-foreground: 215 28% 17%;
+    --background: 240 10% 10%; /* Dark Charcoal */
+    --foreground: 0 0% 98%; /* White */
+    --card: 240 10% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 100% 55%; /* Bright Yellow */
+    --primary-foreground: 240 10% 10%;
+    --secondary: 0 0% 0%; /* Black */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 10% 20%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 195 75% 50%; /* Turquoise */
+    --accent-foreground: 240 10% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 60%;
-    --radius: 0.5rem;
+    --border: 240 10% 25%;
+    --input: 240 10% 25%;
+    --ring: 45 100% 55%;
+    --radius: 0.75rem;
 
-    --chart-1: 142 76% 36%; /* Green for savings/income */
-    --chart-2: 0 72% 51%; /* Red for overspending */
-    --chart-3: 206 90% 59%; /* Blue for expenses */
-    --chart-4: 45 93% 47%; /* Yellow */
-    --chart-5: 275 57% 53%; /* Purple */
-
-    /* Sidebar Theme */
-    --sidebar-background: 215 30% 21%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 206 50% 75%;
-    --sidebar-primary-foreground: 215 30% 21%;
-    --sidebar-accent: 215 30% 26%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 215 30% 26%;
-    --sidebar-ring: 206 50% 75%;
-  }
-
-  .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 13%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 206 50% 75%;
-    --primary-foreground: 215 28% 17%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 16% 57%;
-    --accent: 275 40% 79%;
-    --accent-foreground: 215 28% 17%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 206 50% 75%;
-
-    /* Chart Colors */
     --chart-1: 142 71% 45%;
-    --chart-2: 0 72% 51%;
-    --chart-3: 206 87% 67%;
-    --chart-4: 45 85% 55%;
+    --chart-2: 340 82% 61%; /* Pink from theme */
+    --chart-3: 195 75% 50%; /* Turquoise from theme */
+    --chart-4: 45 100% 55%; /* Yellow from theme */
     --chart-5: 275 67% 65%;
 
     /* Sidebar Theme */
-    --sidebar-background: 222 47% 9%;
+    --sidebar-background: 0 0% 8%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 206 50% 75%;
-    --sidebar-primary-foreground: 215 30% 21%;
-    --sidebar-accent: 222 47% 13%;
+    --sidebar-primary: 45 100% 55%;
+    --sidebar-primary-foreground: 240 10% 10%;
+    --sidebar-accent: 240 10% 20%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 222 47% 13%;
-    --sidebar-ring: 206 50% 75%;
+    --sidebar-border: 240 10% 20%;
+    --sidebar-ring: 45 100% 55%;
+  }
+
+  /* No separate dark theme needed, the default IS the dark theme now */
+  .dark {
+     --background: 240 10% 10%; /* Dark Charcoal */
+    --foreground: 0 0% 98%; /* White */
+    --card: 240 10% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 100% 55%; /* Bright Yellow */
+    --primary-foreground: 240 10% 10%;
+    --secondary: 0 0% 0%; /* Black */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 10% 20%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 195 75% 50%; /* Turquoise */
+    --accent-foreground: 240 10% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 10% 25%;
+    --input: 240 10% 25%;
+    --ring: 45 100% 55%;
+
+    --chart-1: 142 71% 45%;
+    --chart-2: 340 82% 61%; /* Pink from theme */
+    --chart-3: 195 75% 50%; /* Turquoise from theme */
+    --chart-4: 45 100% 55%; /* Yellow from theme */
+    --chart-5: 275 67% 65%;
+
+    /* Sidebar Theme */
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 45 100% 55%;
+    --sidebar-primary-foreground: 240 10% 10%;
+    --sidebar-accent: 240 10% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 10% 20%;
+    --sidebar-ring: 45 100% 55%;
   }
 }
 
