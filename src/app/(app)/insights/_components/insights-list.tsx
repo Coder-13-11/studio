@@ -7,18 +7,20 @@ import type { FinancialInsightsOutput } from '@/ai/flows/generate-financial-insi
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTransactions } from '@/contexts/transactions-provider';
 
 export function InsightsList() {
   const [insights, setInsights] = useState<FinancialInsightsOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { transactions } = useTransactions();
 
   const handleGenerateInsights = async () => {
     setLoading(true);
     setError(null);
     setInsights(null);
     try {
-      const result = await getFinancialInsights();
+      const result = await getFinancialInsights(transactions);
       if ('error' in result) {
         setError(result.error as string);
       } else {

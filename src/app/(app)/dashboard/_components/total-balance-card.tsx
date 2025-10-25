@@ -8,10 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { transactions } from '@/lib/data';
+import { useTransactions } from '@/contexts/transactions-provider';
 import { useMemo } from 'react';
 
 export function TotalBalanceCard() {
+  const { transactions } = useTransactions();
   const { totalBalance, totalIncome, totalExpenses } = useMemo(() => {
     const totalIncome = transactions
       .filter((t) => t.type === 'income')
@@ -21,7 +22,7 @@ export function TotalBalanceCard() {
       .reduce((acc, t) => acc + t.amount, 0);
     const totalBalance = totalIncome - totalExpenses;
     return { totalBalance, totalIncome, totalExpenses };
-  }, []);
+  }, [transactions]);
 
   return (
     <Card className="shadow-sm">

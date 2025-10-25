@@ -23,7 +23,8 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { transactions, categories } from '@/lib/data';
+import { categories } from '@/lib/data';
+import { useTransactions } from '@/contexts/transactions-provider';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 
@@ -71,6 +72,7 @@ const pieChartConfig = {
 
 
 export function AnalyticsCharts() {
+  const { transactions } = useTransactions();
   const monthlyData = useMemo(() => {
     const start = startOfMonth(new Date());
     const end = endOfMonth(new Date());
@@ -89,7 +91,7 @@ export function AnalyticsCharts() {
         expenses: dailyExpenses,
       };
     });
-  }, []);
+  }, [transactions]);
 
   const categoryData = useMemo(() => {
     const expenseCategories = categories.filter((c) => c.name !== 'Income');
@@ -103,7 +105,7 @@ export function AnalyticsCharts() {
         fill: `var(--color-${category.name.toLowerCase()})`,
       };
     }).filter(item => item.value > 0);
-  }, []);
+  }, [transactions]);
 
   return (
     <Tabs defaultValue="overview">

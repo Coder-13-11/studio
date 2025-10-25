@@ -11,16 +11,7 @@ export const categories: Category[] = [
   { id: 'income', name: 'Income', icon: Landmark, color: 'hsl(var(--chart-1))' },
 ];
 
-export const transactions: Transaction[] = [
-  { id: '1', type: 'expense', category: 'Food', amount: 12.5, date: new Date('2024-07-20') },
-  { id: '2', type: 'expense', category: 'Transport', amount: 25, date: new Date('2024-07-20'), note: 'Train ticket' },
-  { id: '3', type: 'income', category: 'Income', amount: 1500, date: new Date('2024-07-19'), note: 'Paycheck' },
-  { id: '4', type: 'expense', category: 'Shopping', amount: 75, date: new Date('2024-07-18') },
-  { id: '5', type: 'expense', category: 'Entertainment', amount: 40, date: new Date('2024-07-17'), note: 'Movie tickets' },
-  { id: '6', type: 'expense', category: 'Food', amount: 22, date: new Date('2024-07-16') },
-  { id: '7', type: 'expense', category: 'Utilities', amount: 120, date: new Date('2024-07-15'), note: 'Electricity bill' },
-  { id: '8', type: 'expense', category: 'Health', amount: 50, date: new Date('2024-07-14'), note: 'Pharmacy' },
-];
+export const transactions: Transaction[] = [];
 
 export const goals: Goal[] = [
   { id: '1', name: 'Save for Vacation', targetAmount: 1000, currentAmount: 350 },

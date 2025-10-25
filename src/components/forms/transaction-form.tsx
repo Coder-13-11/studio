@@ -34,6 +34,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
+import { useTransactions } from '@/contexts/transactions-provider';
 
 const formSchema = z.object({
   type: z.enum(['income', 'expense'], { required_error: 'Please select a transaction type.' }),
@@ -51,24 +52,29 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onFinished }: TransactionFormProps) {
   const { toast } = useToast();
+  const { addTransaction } = useTransactions();
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: 'expense',
-      amount: 0,
-      category: '',
       date: new Date(),
-      note: '',
     },
   });
 
   const transactionType = form.watch('type');
 
   function onSubmit(values: TransactionFormValues) {
-    console.log(values);
+    addTransaction(values);
     toast({
       title: 'Transaction Logged',
       description: `Your ${values.type} of $${values.amount.toFixed(2)} has been saved.`,
+    });
+    form.reset({
+      type: 'expense',
+      date: new Date(),
+      amount: 0,
+      category: '',
+      note: '',
     });
     onFinished?.();
   }
@@ -84,7 +90,10 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
               <FormLabel>Transaction Type</FormLabel>
               <FormControl>
                 <RadioGroup
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    form.setValue('category', '');
+                  }}
                   defaultValue={field.value}
                   className="flex space-x-4"
                 >
@@ -125,7 +134,7 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />

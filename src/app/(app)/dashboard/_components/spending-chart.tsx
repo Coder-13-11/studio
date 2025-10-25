@@ -16,7 +16,8 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
-import { transactions, categories } from '@/lib/data';
+import { categories } from '@/lib/data';
+import { useTransactions } from '@/contexts/transactions-provider';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 const chartConfig = {
@@ -36,6 +37,7 @@ categories.forEach((category) => {
 
 
 export function SpendingChart() {
+  const { transactions } = useTransactions();
   const data = useMemo(() => {
     const expenseCategories = categories.filter((c) => c.name !== 'Income');
     return expenseCategories.map((category) => {
@@ -48,7 +50,7 @@ export function SpendingChart() {
         fill: `var(--color-${category.name})`,
       };
     });
-  }, []);
+  }, [transactions]);
 
   return (
     <Card className="shadow-sm">
