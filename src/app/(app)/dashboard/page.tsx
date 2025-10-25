@@ -1,5 +1,4 @@
 import { PageHeader } from '@/components/page-header';
-import { AddTransactionDialog } from './_components/add-transaction-dialog';
 import { TotalBalanceCard } from './_components/total-balance-card';
 import { GoalsSummaryCard } from './_components/goals-summary-card';
 import { SpendingChart } from './_components/spending-chart';
@@ -30,7 +29,6 @@ export default function DashboardPage() {
           <GoalsSummaryCard />
         </div>
       </div>
-      <AddTransactionDialog />
     </>
   );
 }

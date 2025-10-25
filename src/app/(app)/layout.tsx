@@ -9,6 +9,7 @@ import { GoalsProvider } from '@/contexts/goals-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AppHeader } from './_components/app-header';
 import { ScheduledTransactionsProvider } from '@/contexts/scheduled-transactions-provider';
+import { GlobalAddButton } from './_components/global-add-button';
 
 export default function AppLayout({
   children,
@@ -49,6 +50,7 @@ export default function AppLayout({
               <SidebarInset>
                 <AppHeader />
                 <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+                <GlobalAddButton />
               </SidebarInset>
             </div>
           </SidebarProvider>
