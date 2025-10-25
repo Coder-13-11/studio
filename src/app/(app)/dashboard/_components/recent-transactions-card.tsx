@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,6 +12,7 @@ import {
 import { useTransactions } from '@/contexts/transactions-provider';
 import { CategoryIcon } from '@/components/category-icon';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Timestamp } from 'firebase/firestore';
 
 export function RecentTransactionsCard() {
   const { transactions, isLoading } = useTransactions();
@@ -19,6 +21,16 @@ export function RecentTransactionsCard() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const formatDate = (date: string | Date | Timestamp) => {
+    if (!isClient) {
+      return '';
+    }
+    if (date instanceof Timestamp) {
+      return date.toDate().toLocaleDateString();
+    }
+    return new Date(date).toLocaleDateString();
+  };
   
   if (isLoading) {
     return (
@@ -58,7 +70,11 @@ export function RecentTransactionsCard() {
   }
 
   const recentTransactions = (transactions ?? [])
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => {
+      const dateA = a.date instanceof Timestamp ? a.date.toMillis() : new Date(a.date).getTime();
+      const dateB = b.date instanceof Timestamp ? b.date.toMillis() : new Date(b.date).getTime();
+      return dateB - dateA;
+    })
     .slice(0, 5);
 
   return (
@@ -76,9 +92,9 @@ export function RecentTransactionsCard() {
               <div key={transaction.id} className="flex items-center gap-4">
                 <CategoryIcon category={transaction.category} />
                 <div className="flex-1">
-                  <p className="font-medium">{transaction.category}</p>
+                  <p className="font-medium">{transaction.note || transaction.category}</p>
                   <p className="text-sm text-muted-foreground">
-                    {isClient ? new Date(transaction.date).toLocaleDateString() : ''}
+                    {formatDate(transaction.date)}
                   </p>
                 </div>
                 <div className="flex items-center text-right">

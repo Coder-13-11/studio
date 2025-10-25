@@ -1,3 +1,4 @@
+
 'use client';
 
 import { z } from 'zod';
@@ -57,7 +58,7 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: 'expense',
-      amount: 0,
+      amount: undefined,
       category: '',
       date: new Date(),
       note: '',
@@ -70,12 +71,12 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
     addTransaction(values);
     toast({
       title: 'Transaction Logged',
-      description: `Your ${values.type} of $${values.amount.toFixed(2)} has been saved.`,
+      description: `Your ${values.type} of $${(values.amount || 0).toFixed(2)} has been saved.`,
     });
     form.reset({
       type: 'expense',
       date: new Date(),
-      amount: 0,
+      amount: undefined,
       category: '',
       note: '',
     });
@@ -125,7 +126,7 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0.00" {...field} value={field.value || ''} />
+                <Input type="number" placeholder="0.00" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
