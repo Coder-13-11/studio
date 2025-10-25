@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -9,11 +10,16 @@ import {
 } from '@/components/ui/card';
 import { transactions } from '@/lib/data';
 import { CategoryIcon } from '@/components/category-icon';
-import { ArrowDown, ArrowUp } from 'lucide-react';
 
 export function RecentTransactionsCard() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const recentTransactions = transactions
-    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
   return (
@@ -30,13 +36,15 @@ export function RecentTransactionsCard() {
               <div className="flex-1">
                 <p className="font-medium">{transaction.category}</p>
                 <p className="text-sm text-muted-foreground">
-                  {transaction.date.toLocaleDateString()}
+                  {isClient ? new Date(transaction.date).toLocaleDateString() : ''}
                 </p>
               </div>
               <div className="flex items-center text-right">
                 <span
                   className={`font-semibold ${
-                    transaction.type === 'income' ? 'text-green-600' : 'text-foreground'
+                    transaction.type === 'income'
+                      ? 'text-green-600'
+                      : 'text-foreground'
                   }`}
                 >
                   {transaction.type === 'income' ? '+' : '-'}{' '}
