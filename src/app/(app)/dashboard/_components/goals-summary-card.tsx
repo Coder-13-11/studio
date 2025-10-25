@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ProgressRing } from '@/components/ui/progress-ring';
+import { Progress } from '@/components/ui/progress';
 import { useGoals } from '@/contexts/goals-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -28,47 +28,53 @@ export function GoalsSummaryCard() {
       <CardContent className="space-y-6">
         {isLoading && (
           <>
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-[96px] w-[96px] rounded-full" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-full" />
             </div>
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-[96px] w-[96px] rounded-full" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-full" />
             </div>
           </>
         )}
         {!isLoading && goals && goals.length === 0 && (
-          <p className="py-8 text-center text-muted-foreground">No goals set yet.</p>
+          <p className="py-8 text-center text-muted-foreground">
+            No goals set yet.
+          </p>
         )}
-        {!isLoading && goals && goals.slice(0, 2).map((goal) => {
-          const progress = (goal.currentAmount / goal.targetAmount) * 100;
-          return (
-            <div key={goal.id} className="flex items-center gap-4">
-              <ProgressRing progress={progress} size={96} />
-              <div className="flex-1">
-                <p className="font-semibold">{goal.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  }).format(goal.currentAmount)}{' '}
-                  / {' '}
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                  }).format(goal.targetAmount)}
-                </p>
+        {!isLoading &&
+          goals &&
+          goals.slice(0, 2).map((goal) => {
+            const progress = (goal.currentAmount / goal.targetAmount) * 100;
+            return (
+              <div key={goal.id} className="space-y-2">
+                <div className="flex justify-between font-medium">
+                  <span>{goal.name}</span>
+                  <span>{progress.toFixed(0)}%</span>
+                </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 0,
+                    }).format(goal.currentAmount)}
+                  </span>
+                  <span>
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 0,
+                    }).format(goal.targetAmount)}
+                  </span>
+                </div>
+                <Progress value={progress} />
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </CardContent>
     </Card>
   );
