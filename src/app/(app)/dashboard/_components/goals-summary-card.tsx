@@ -25,18 +25,18 @@ export function GoalsSummaryCard() {
           <a href="/goals">View All</a>
         </Button>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {isLoading && (
           <>
             <div className="flex items-center gap-4">
-                <Skeleton className="h-[60px] w-[60px] rounded-full" />
+                <Skeleton className="h-[72px] w-[72px] rounded-full" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <Skeleton className="h-[60px] w-[60px] rounded-full" />
+                <Skeleton className="h-[72px] w-[72px] rounded-full" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
@@ -45,15 +45,15 @@ export function GoalsSummaryCard() {
           </>
         )}
         {!isLoading && goals && goals.length === 0 && (
-          <p className="text-center text-muted-foreground">No goals set yet.</p>
+          <p className="py-8 text-center text-muted-foreground">No goals set yet.</p>
         )}
         {!isLoading && goals && goals.slice(0, 2).map((goal) => {
           const progress = (goal.currentAmount / goal.targetAmount) * 100;
           return (
             <div key={goal.id} className="flex items-center gap-4">
-              <ProgressRing progress={progress} size={60} />
+              <ProgressRing progress={progress} size={72} />
               <div className="flex-1">
-                <p className="font-medium">{goal.name}</p>
+                <p className="font-semibold">{goal.name}</p>
                 <p className="text-sm text-muted-foreground">
                   {new Intl.NumberFormat('en-US', {
                     style: 'currency',
