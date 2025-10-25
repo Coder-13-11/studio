@@ -17,7 +17,23 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { transactions, categories } from '@/lib/data';
-import { ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
+
+const chartConfig = {
+  total: {
+    label: 'Total',
+  },
+};
+
+categories.forEach((category) => {
+  if (category.name !== 'Income') {
+    chartConfig[category.name as keyof typeof chartConfig] = {
+      label: category.name,
+      color: category.color,
+    };
+  }
+});
+
 
 export function SpendingChart() {
   const data = useMemo(() => {
@@ -29,7 +45,7 @@ export function SpendingChart() {
       return {
         name: category.name,
         total,
-        fill: category.color,
+        fill: `var(--color-${category.name})`,
       };
     });
   }, []);
@@ -41,8 +57,8 @@ export function SpendingChart() {
         <CardDescription>This month's expenses.</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+          <BarChart accessibilityLayer data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
             <XAxis
               dataKey="name"
               stroke="#888888"
@@ -60,12 +76,19 @@ export function SpendingChart() {
             <Tooltip
               cursor={{ fill: 'hsl(var(--muted))' }}
               content={<ChartTooltipContent
-                formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)}
+                formatter={(value, name) => {
+                  return (
+                    <div className="flex flex-col">
+                      <span>{name}</span>
+                      <span className="font-bold">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)}</span>
+                    </div>
+                  );
+                }}
               />}
             />
             <Bar dataKey="total" radius={[4, 4, 0, 0]} />
           </BarChart>
-        </ResponsiveContainer>
+        </ChartContainer>
       </CardContent>
     </Card>
   );
