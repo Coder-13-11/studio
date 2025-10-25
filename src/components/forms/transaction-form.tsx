@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { CalendarIcon, ChevronsUpDown } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 
 import { cn } from '@/lib/utils';
@@ -55,7 +55,10 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: 'expense',
+      amount: 0,
+      category: '',
       date: new Date(),
+      note: '',
     },
   });
 

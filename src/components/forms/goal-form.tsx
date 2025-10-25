@@ -31,6 +31,10 @@ export function GoalForm({ onFinished }: GoalFormProps) {
   const { toast } = useToast();
   const form = useForm<GoalFormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      targetAmount: 0,
+    },
   });
 
   function onSubmit(values: GoalFormValues) {
