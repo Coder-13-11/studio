@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: { children: ReactNode}) {
         }
     }, [user, isUserLoading]);
 
-    if(isUserLoading || user){
+    if(isUserLoading){
         return (
              <div className="flex h-screen w-full items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
@@ -23,6 +23,12 @@ export default function AuthLayout({ children }: { children: ReactNode}) {
             </div>
         )
     }
+    
+    // If user is already loaded and exists, redirect handled by useEffect
+    if (user) {
+      return null;
+    }
+
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4">

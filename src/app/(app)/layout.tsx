@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { SidebarProvider, Sidebar, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from './_components/sidebar';
@@ -14,12 +14,13 @@ export default function AppLayout({
   children: React.ReactNode;
 }>) {
   const { user, isUserLoading } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      redirect('/login');
+      router.push('/login');
     }
-  }, [user, isUserLoading]);
+  }, [user, isUserLoading, router]);
 
   if (isUserLoading) {
     return (

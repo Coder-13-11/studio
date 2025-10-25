@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,6 +36,7 @@ type UserFormValue = z.infer<typeof formSchema>;
 
 export default function AuthForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const mode = searchParams.get('mode') || 'login';
   const auth = useAuth();
   const { toast } = useToast();
@@ -67,10 +68,14 @@ export default function AuthForm() {
           description: "Welcome back!",
         });
       }
+      router.push('/dashboard');
     } catch (err: any) {
       if (err.code === 'auth/invalid-credential') {
         setError('Invalid login credentials. Please check your email and password.');
-      } else {
+      } else if (err.code === 'auth/email-already-in-use') {
+        setError('An account with this email already exists. Please login.');
+      }
+      else {
         setError(err.message);
       }
     } finally {
