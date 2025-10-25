@@ -68,7 +68,11 @@ export default function AuthForm() {
         });
       }
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/invalid-credential') {
+        setError('Invalid login credentials. Please check your email and password.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
