@@ -29,14 +29,14 @@ export function GoalsSummaryCard() {
         {isLoading && (
           <>
             <div className="flex items-center gap-4">
-                <Skeleton className="h-[72px] w-[72px] rounded-full" />
+                <Skeleton className="h-[96px] w-[96px] rounded-full" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
                 </div>
             </div>
             <div className="flex items-center gap-4">
-                <Skeleton className="h-[72px] w-[72px] rounded-full" />
+                <Skeleton className="h-[96px] w-[96px] rounded-full" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
@@ -51,7 +51,7 @@ export function GoalsSummaryCard() {
           const progress = (goal.currentAmount / goal.targetAmount) * 100;
           return (
             <div key={goal.id} className="flex items-center gap-4">
-              <ProgressRing progress={progress} size={72} />
+              <ProgressRing progress={progress} size={96} />
               <div className="flex-1">
                 <p className="font-semibold">{goal.name}</p>
                 <p className="text-sm text-muted-foreground">
