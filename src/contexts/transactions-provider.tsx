@@ -2,9 +2,12 @@
 
 import React, { createContext, useContext, ReactNode } from 'react';
 import type { Transaction } from '@/lib/types';
-import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
+import { useCollection, useFirebase, useMemoFirebase }from '@/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { WithId } from '@/firebase/firestore/use-collection';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
 
 interface TransactionsContextType {
   transactions: WithId<Transaction>[] | null;
@@ -26,10 +29,18 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
 
   const addTransaction = (transaction: Omit<Transaction, 'id' | 'date'> & { date: Date }) => {
     if (!transactionsCollection) return;
-    addDoc(transactionsCollection, {
+    const newTransactionData = {
       ...transaction,
       date: transaction.date,
       createdAt: serverTimestamp(),
+    };
+    addDoc(transactionsCollection, newTransactionData).catch(async (serverError) => {
+      const permissionError = new FirestorePermissionError({
+        path: transactionsCollection.path,
+        operation: 'create',
+        requestResourceData: newTransactionData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
     });
   };
 

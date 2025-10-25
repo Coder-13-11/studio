@@ -5,6 +5,8 @@ import type { Goal } from '@/lib/types';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { WithId } from '@/firebase/firestore/use-collection';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 interface GoalsContextType {
   goals: WithId<Goal>[] | null;
@@ -27,16 +29,30 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
 
   const addGoal = (goal: Omit<Goal, 'id'>) => {
     if (!goalsCollection) return;
-    addDoc(goalsCollection, {
+    const newGoalData = {
       ...goal,
       createdAt: serverTimestamp(),
+    };
+    addDoc(goalsCollection, newGoalData).catch(async (serverError) => {
+      const permissionError = new FirestorePermissionError({
+        path: goalsCollection.path,
+        operation: 'create',
+        requestResourceData: newGoalData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
     });
   };
 
   const deleteGoal = (goalId: string) => {
     if (!firestore || !user) return;
     const goalDocRef = doc(firestore, 'users', user.uid, 'goals', goalId);
-    deleteDoc(goalDocRef);
+    deleteDoc(goalDocRef).catch(async (serverError) => {
+      const permissionError = new FirestorePermissionError({
+        path: goalDocRef.path,
+        operation: 'delete',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    });
   };
 
   return (
