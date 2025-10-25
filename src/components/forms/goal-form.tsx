@@ -36,13 +36,13 @@ export function GoalForm({ onFinished }: GoalFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      targetAmount: 0,
+      targetAmount: undefined,
       currentAmount: 0,
     },
   });
 
   function onSubmit(values: GoalFormValues) {
-    addGoal({ ...values, currentAmount: values.currentAmount || 0 });
+    addGoal({ ...values, currentAmount: values.currentAmount || 0, targetAmount: values.targetAmount || 0 });
     toast({
       title: 'Goal Created!',
       description: `You've set a new goal: "${values.name}".`,
@@ -74,7 +74,7 @@ export function GoalForm({ onFinished }: GoalFormProps) {
             <FormItem>
               <FormLabel>Target Amount</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="1000.00" {...field} />
+                <Input type="number" placeholder="1000.00" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,7 +87,7 @@ export function GoalForm({ onFinished }: GoalFormProps) {
             <FormItem>
               <FormLabel>Current Amount (Optional)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0.00" {...field} />
+                <Input type="number" placeholder="0.00" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>

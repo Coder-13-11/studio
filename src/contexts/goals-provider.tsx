@@ -3,14 +3,15 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import type { Goal } from '@/lib/types';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { WithId } from '@/firebase/firestore/use-collection';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
 interface GoalsContextType {
   goals: WithId<Goal>[] | null;
-  addGoal: (goal: Omit<Goal, 'id'>) => void;
+  addGoal: (goal: Omit<Goal, 'id' | 'deadline'> & { deadline?: Date }) => void;
+  updateGoal: (goal: WithId<Goal>) => void;
   deleteGoal: (goalId: string) => void;
   isLoading: boolean;
 }
@@ -27,7 +28,7 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
 
   const { data: goals, isLoading } = useCollection<Goal>(goalsCollection);
 
-  const addGoal = (goal: Omit<Goal, 'id'>) => {
+  const addGoal = (goal: Omit<Goal, 'id' | 'deadline'> & { deadline?: Date }) => {
     if (!goalsCollection) return;
     const newGoalData = {
       ...goal,
@@ -38,6 +39,20 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
         path: goalsCollection.path,
         operation: 'create',
         requestResourceData: newGoalData,
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    });
+  };
+
+  const updateGoal = (goal: WithId<Goal>) => {
+    if (!firestore || !user) return;
+    const { id, ...goalData } = goal;
+    const goalDocRef = doc(firestore, 'users', user.uid, 'goals', id);
+    updateDoc(goalDocRef, goalData).catch(async (serverError) => {
+       const permissionError = new FirestorePermissionError({
+        path: goalDocRef.path,
+        operation: 'update',
+        requestResourceData: goalData,
       });
       errorEmitter.emit('permission-error', permissionError);
     });
@@ -56,7 +71,7 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <GoalsContext.Provider value={{ goals, addGoal, deleteGoal, isLoading }}>
+    <GoalsContext.Provider value={{ goals, addGoal, updateGoal, deleteGoal, isLoading }}>
       {children}
     </GoalsContext.Provider>
   );
