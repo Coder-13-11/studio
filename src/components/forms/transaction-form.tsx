@@ -57,7 +57,10 @@ export function TransactionForm({ onFinished }: TransactionFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: 'expense',
+      amount: 0,
+      category: '',
       date: new Date(),
+      note: '',
     },
   });
 
