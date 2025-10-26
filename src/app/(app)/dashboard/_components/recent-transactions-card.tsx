@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -32,6 +32,17 @@ export function RecentTransactionsCard() {
     return new Date(date).toLocaleDateString();
   };
   
+  const recentTransactions = useMemo(() => {
+    return (transactions ?? [])
+      .sort((a, b) => {
+        const dateA = a.date instanceof Timestamp ? a.date.toMillis() : new Date(a.date).getTime();
+        const dateB = b.date instanceof Timestamp ? b.date.toMillis() : new Date(b.date).getTime();
+        return dateB - dateA;
+      })
+      .slice(0, 5);
+  }, [transactions]);
+
+
   if (isLoading) {
     return (
       <Card className="shadow-sm">
@@ -68,14 +79,6 @@ export function RecentTransactionsCard() {
       </Card>
     )
   }
-
-  const recentTransactions = (transactions ?? [])
-    .sort((a, b) => {
-      const dateA = a.date instanceof Timestamp ? a.date.toMillis() : new Date(a.date).getTime();
-      const dateB = b.date instanceof Timestamp ? b.date.toMillis() : new Date(b.date).getTime();
-      return dateB - dateA;
-    })
-    .slice(0, 5);
 
   return (
     <Card className="shadow-sm">
