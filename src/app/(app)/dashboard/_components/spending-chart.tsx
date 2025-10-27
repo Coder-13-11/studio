@@ -20,35 +20,39 @@ import { categories } from '@/lib/data';
 import { useTransactions } from '@/contexts/transactions-provider';
 import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
 
-const chartConfig = {
-  total: {
-    label: 'Total',
-  },
-} satisfies ChartConfig;
-
-categories.forEach((category) => {
-  if (category.name !== 'Income') {
-    const key = category.name.toLowerCase();
-    chartConfig[key as keyof typeof chartConfig] = {
-      label: category.name,
-      color: `hsl(var(--chart-${Object.keys(chartConfig).length}))`,
-    };
-  }
-});
-
 
 export function SpendingChart() {
   const { transactions } = useTransactions();
+
+  const chartConfig = useMemo(() => {
+    const config: ChartConfig = {
+      total: {
+        label: 'Total',
+      },
+    };
+    categories.forEach((category, index) => {
+      if (category.name !== 'Income') {
+        const key = category.name.toLowerCase();
+        config[key] = {
+          label: category.name,
+          color: `hsl(var(--chart-${(index % 5) + 1}))`,
+        };
+      }
+    });
+    return config;
+  }, []);
+
   const data = useMemo(() => {
     const expenseCategories = categories.filter((c) => c.name !== 'Income');
     return expenseCategories.map((category) => {
       const total = (transactions ?? [])
         .filter((t) => t.type === 'expense' && t.category === category.name)
         .reduce((acc, t) => acc + t.amount, 0);
+      const categoryKey = category.name.toLowerCase();
       return {
         name: category.name,
         total,
-        fill: `var(--color-${category.name.toLowerCase()})`,
+        fill: `var(--color-${categoryKey})`,
       };
     });
   }, [transactions]);
