@@ -3,7 +3,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import type { Transaction } from '@/lib/types';
 import { useCollection, useFirebase, useMemoFirebase }from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, writeBatch, doc } from 'firebase/firestore';
 import { WithId } from '@/firebase/firestore/use-collection';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -12,6 +12,7 @@ import { FirestorePermissionError } from '@/firebase/errors';
 interface TransactionsContextType {
   transactions: WithId<Transaction>[] | null;
   addTransaction: (transaction: Omit<Transaction, 'id' | 'date'> & { date: Date }) => void;
+  deleteAllTransactions: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -44,8 +45,27 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const deleteAllTransactions = async () => {
+    if (!firestore || !user || !transactions) return;
+    try {
+      const batch = writeBatch(firestore);
+      transactions.forEach((transaction) => {
+        const transactionDocRef = doc(firestore, 'users', user.uid, 'transactions', transaction.id);
+        batch.delete(transactionDocRef);
+      });
+      await batch.commit();
+    } catch (error) {
+      console.error("Error deleting all transactions:", error);
+      const permissionError = new FirestorePermissionError({
+        path: `users/${user.uid}/transactions`,
+        operation: 'delete',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    }
+  };
+
   return (
-    <TransactionsContext.Provider value={{ transactions, addTransaction, isLoading }}>
+    <TransactionsContext.Provider value={{ transactions, addTransaction, deleteAllTransactions, isLoading }}>
       {children}
     </TransactionsContext.Provider>
   );

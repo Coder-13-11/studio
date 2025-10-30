@@ -3,7 +3,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import type { Goal } from '@/lib/types';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, addDoc, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore';
 import { WithId } from '@/firebase/firestore/use-collection';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -13,6 +13,7 @@ interface GoalsContextType {
   addGoal: (goal: Omit<Goal, 'id' | 'deadline'> & { deadline?: Date }) => void;
   updateGoal: (goal: WithId<Goal>) => void;
   deleteGoal: (goalId: string) => void;
+  deleteAllGoals: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -70,8 +71,28 @@ export function GoalsProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const deleteAllGoals = async () => {
+    if (!firestore || !user || !goals) return;
+
+    try {
+      const batch = writeBatch(firestore);
+      goals.forEach((goal) => {
+        const goalDocRef = doc(firestore, 'users', user.uid, 'goals', goal.id);
+        batch.delete(goalDocRef);
+      });
+      await batch.commit();
+    } catch (error) {
+      console.error("Error deleting all goals:", error);
+      const permissionError = new FirestorePermissionError({
+        path: `users/${user.uid}/goals`,
+        operation: 'delete',
+      });
+      errorEmitter.emit('permission-error', permissionError);
+    }
+  };
+
   return (
-    <GoalsContext.Provider value={{ goals, addGoal, updateGoal, deleteGoal, isLoading }}>
+    <GoalsContext.Provider value={{ goals, addGoal, updateGoal, deleteGoal, deleteAllGoals, isLoading }}>
       {children}
     </GoalsContext.Provider>
   );
