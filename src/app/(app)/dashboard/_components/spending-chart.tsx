@@ -1,14 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from 'recharts';
+import { Bar, BarChart, XAxis, YAxis, Tooltip } from 'recharts';
 import {
   Card,
   CardContent,
@@ -18,8 +11,11 @@ import {
 } from '@/components/ui/card';
 import { categories } from '@/lib/data';
 import { useTransactions } from '@/contexts/transactions-provider';
-import { ChartContainer, ChartTooltipContent, ChartConfig } from '@/components/ui/chart';
-
+import {
+  ChartContainer,
+  ChartTooltipContent,
+  ChartConfig,
+} from '@/components/ui/chart';
 
 export function SpendingChart() {
   const { transactions } = useTransactions();
@@ -65,7 +61,11 @@ export function SpendingChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-          <BarChart accessibilityLayer data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+          <BarChart
+            accessibilityLayer
+            data={data}
+            margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+          >
             <XAxis
               dataKey="name"
               stroke="#888888"
@@ -82,10 +82,17 @@ export function SpendingChart() {
             />
             <Tooltip
               cursor={{ fill: 'hsl(var(--muted))' }}
-              content={<ChartTooltipContent
-                formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value as number)}
-                nameKey='name'
-              />}
+              content={
+                <ChartTooltipContent
+                  formatter={(value) =>
+                    new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                    }).format(value as number)
+                  }
+                  nameKey="name"
+                />
+              }
             />
             <Bar dataKey="total" radius={[4, 4, 0, 0]} />
           </BarChart>

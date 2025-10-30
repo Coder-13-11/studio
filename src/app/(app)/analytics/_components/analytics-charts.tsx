@@ -21,36 +21,17 @@ export function AnalyticsCharts() {
   const { transactions } = useTransactions();
 
   const pieChartConfig = useMemo(() => {
-    return {
-      income: {
-        label: 'Income',
-        color: 'hsl(var(--chart-1))',
-      },
-      food: {
-        label: 'Food',
-        color: 'hsl(var(--chart-3))',
-      },
-      transport: {
-        label: 'Transport',
-        color: 'hsl(var(--chart-4))',
-      },
-      shopping: {
-        label: 'Shopping',
-        color: 'hsl(var(--chart-5))',
-      },
-      entertainment: {
-        label: 'Entertainment',
-        color: 'hsl(var(--chart-2))',
-      },
-      health: {
-        label: 'Health',
-        color: 'hsl(var(--chart-1))',
-      },
-      utilities: {
-        label: 'Utilities',
-        color: 'hsl(var(--chart-3))',
-      },
-    } satisfies ChartConfig;
+    const config: ChartConfig = {};
+    categories.forEach((category, index) => {
+      if (category.name !== 'Income') {
+        const key = category.name.toLowerCase();
+        config[key] = {
+          label: category.name,
+          color: `hsl(var(--chart-${(index % 5) + 1}))`,
+        };
+      }
+    });
+    return config;
   }, []);
 
   const categoryData = useMemo(() => {
@@ -58,17 +39,22 @@ export function AnalyticsCharts() {
     return expenseCategories
       .map((category) => {
         const total = (transactions ?? [])
-          .filter((t) => t.type === 'expense' && t.category === category.name)
+          .filter(
+            (t) => t.type === 'expense' && t.category === category.name
+          )
           .reduce((acc, t) => acc + t.amount, 0);
-        const categoryKey = category.name.toLowerCase();
+
+        const categoryInfo = pieChartConfig[category.name.toLowerCase()];
+        if (!categoryInfo) return null;
+
         return {
           name: category.name,
           value: total,
-          fill: `var(--color-${categoryKey})`,
+          fill: `var(--color-${category.name.toLowerCase()})`,
         };
       })
-      .filter((item) => item.value > 0);
-  }, [transactions]);
+      .filter((item): item is NonNullable<typeof item> => item !== null && item.value > 0);
+  }, [transactions, pieChartConfig]);
 
   return (
     <Card>
@@ -136,6 +122,9 @@ export function AnalyticsCharts() {
                     {payload.map((entry: any, index) => {
                       const name = entry.payload?.name;
                       if (!name) return null;
+                      const categoryKey = name.toLowerCase();
+                      if (!pieChartConfig[categoryKey]) return null;
+
                       return (
                         <div key={`item-${index}`} className="flex items-center gap-2">
                           <span style={{ backgroundColor: entry.color }} className="h-3 w-3 rounded-full"></span>
