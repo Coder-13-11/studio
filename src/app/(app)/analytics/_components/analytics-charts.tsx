@@ -133,12 +133,16 @@ export function AnalyticsCharts() {
                 if (!payload) return null;
                 return (
                   <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 p-4 text-sm">
-                    {payload.map((entry: any, index) => (
-                      <div key={`item-${index}`} className="flex items-center gap-2">
-                        <span style={{ backgroundColor: entry.color }} className="h-3 w-3 rounded-full"></span>
-                        <span className="capitalize text-muted-foreground">{entry.payload.name.toLowerCase()}</span>
-                      </div>
-                    ))}
+                    {payload.map((entry: any, index) => {
+                      const name = entry.payload?.name;
+                      if (!name) return null;
+                      return (
+                        <div key={`item-${index}`} className="flex items-center gap-2">
+                          <span style={{ backgroundColor: entry.color }} className="h-3 w-3 rounded-full"></span>
+                          <span className="capitalize text-muted-foreground">{name.toLowerCase()}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               }}
