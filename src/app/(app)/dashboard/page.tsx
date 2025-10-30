@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/page-header';
 import { TotalBalanceCard } from './_components/total-balance-card';
 import { GoalsSummaryCard } from './_components/goals-summary-card';
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const { deleteAllGoals } = useGoals();
   const { deleteAllScheduledTransactions } = useScheduledTransactions();
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleReset = async () => {
     setIsResetting(true);
@@ -43,6 +45,7 @@ export default function DashboardPage() {
         title: 'Data Reset Successfully',
         description: 'All your personal data has been cleared.',
       });
+      router.push('/');
     } catch (error) {
       toast({
         title: 'Error Resetting Data',
