@@ -17,39 +17,41 @@ import {
   ChartConfig,
 } from '@/components/ui/chart';
 
-const pieChartConfig = {
-  income: {
-    label: 'Income',
-    color: 'hsl(var(--chart-1))',
-  },
-  food: {
-    label: 'Food',
-    color: 'hsl(var(--chart-3))',
-  },
-  transport: {
-    label: 'Transport',
-    color: 'hsl(var(--chart-4))',
-  },
-  shopping: {
-    label: 'Shopping',
-    color: 'hsl(var(--chart-5))',
-  },
-  entertainment: {
-    label: 'Entertainment',
-    color: 'hsl(var(--chart-2))',
-  },
-  health: {
-    label: 'Health',
-    color: 'hsl(var(--chart-1))',
-  },
-  utilities: {
-    label: 'Utilities',
-    color: 'hsl(var(--chart-3))',
-  },
-} satisfies ChartConfig;
-
 export function AnalyticsCharts() {
   const { transactions } = useTransactions();
+
+  const pieChartConfig = useMemo(() => {
+    return {
+      income: {
+        label: 'Income',
+        color: 'hsl(var(--chart-1))',
+      },
+      food: {
+        label: 'Food',
+        color: 'hsl(var(--chart-3))',
+      },
+      transport: {
+        label: 'Transport',
+        color: 'hsl(var(--chart-4))',
+      },
+      shopping: {
+        label: 'Shopping',
+        color: 'hsl(var(--chart-5))',
+      },
+      entertainment: {
+        label: 'Entertainment',
+        color: 'hsl(var(--chart-2))',
+      },
+      health: {
+        label: 'Health',
+        color: 'hsl(var(--chart-1))',
+      },
+      utilities: {
+        label: 'Utilities',
+        color: 'hsl(var(--chart-3))',
+      },
+    } satisfies ChartConfig;
+  }, []);
 
   const categoryData = useMemo(() => {
     const expenseCategories = categories.filter((c) => c.name !== 'Income');
@@ -58,10 +60,11 @@ export function AnalyticsCharts() {
         const total = (transactions ?? [])
           .filter((t) => t.type === 'expense' && t.category === category.name)
           .reduce((acc, t) => acc + t.amount, 0);
+        const categoryKey = category.name.toLowerCase();
         return {
-          name: category.name.toLowerCase(),
+          name: category.name,
           value: total,
-          fill: `var(--color-${category.name.toLowerCase()})`,
+          fill: `var(--color-${categoryKey})`,
         };
       })
       .filter((item) => item.value > 0);
@@ -121,10 +124,25 @@ export function AnalyticsCharts() {
                       currency: 'USD',
                     }).format(value as number)
                   }
+                  nameKey="name"
                 />
               }
             />
-            <Legend />
+            <Legend
+              content={({ payload }) => {
+                if (!payload) return null;
+                return (
+                  <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 p-4 text-sm">
+                    {payload.map((entry: any, index) => (
+                      <div key={`item-${index}`} className="flex items-center gap-2">
+                        <span style={{ backgroundColor: entry.color }} className="h-3 w-3 rounded-full"></span>
+                        <span className="capitalize text-muted-foreground">{entry.payload.name.toLowerCase()}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              }}
+            />
           </PieChart>
         </ChartContainer>
       </CardContent>
